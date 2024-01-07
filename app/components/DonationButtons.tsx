@@ -1,16 +1,53 @@
 "use client";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import DonateDialog from "./DonateDialog";
-import { Currency } from "../utils";
+import { Currency, getCurrencyFromCountry } from "../utils";
+import Loading from "../loading";
 
-export default function DonationButtons({
-  country,
-  currency,
-}: {
-  country?: string;
-  currency: Currency | undefined;
-}) {
+export default function DonationButtons() {
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [country, setCountry] = useState("");
+  const [currency, setCurrency] = useState<Currency>();
+
+  useEffect(() => {
+    const getCurrency = async () => {
+      "use client";
+      let country;
+      let ip;
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/geo-stats`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        country = data.country;
+        ip = data.ip;
+      }
+
+      if (!country && ip) {
+        country = (
+          await (
+            await fetch(
+              `http://api.ipapi.com/api/${ip}?access_key=${process.env.IPAPI_API_KEY}&fields=country_code`
+            )
+          ).json()
+        )["country_code"];
+      }
+      return { country, currency: getCurrencyFromCountry(country) };
+    };
+
+    getCurrency().then(({ country, currency }) => {
+      setCountry(country);
+      setCurrency(currency);
+      setInitialLoad(false);
+    });
+  }, []);
+
   const modalRef = useRef<HTMLDialogElement>(null);
+
+  if (initialLoad) {
+    return <Loading fillScreen={false} />;
+  }
 
   return (
     <>
