@@ -1,5 +1,5 @@
 "use client";
-import { getDonations } from "@/firebase/firestore";
+import { getDonationsWithOffset } from "@/firebase/firestore";
 import { QueryDocumentSnapshot } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Donation as DonationType } from "@/firebase/firestore";
@@ -13,12 +13,10 @@ export default function Donations() {
     useState<QueryDocumentSnapshot<DonationType>[]>();
 
   useEffect(() => {
-    const unsubscribe = getDonations(3, (snapshot) => {
-      setDonations(snapshot);
+    getDonationsWithOffset(3).then((documents) => {
+      setDonations(documents);
       setInitialLoad(false);
     });
-
-    return () => unsubscribe();
   });
 
   if (initialLoad) {

@@ -33,21 +33,6 @@ export interface Donation {
 
 const DONATIONS_COLLECTION = process.env.NEXT_PUBLIC_DONATIONS_COLLECTION || "";
 
-export const getDonations = (
-  maxRecords: number,
-  setRecords: (records: QueryDocumentSnapshot<Donation>[]) => void
-) => {
-  const q = query(
-    collection(db, DONATIONS_COLLECTION),
-    where("is_paid", "==", true),
-    orderBy("timestamp", "desc"),
-    limit(maxRecords)
-  );
-  return onSnapshot(q, (snapshot) =>
-    setRecords((snapshot as QuerySnapshot<Donation>).docs)
-  );
-};
-
 export const getDonationsWithOffset = async (
   count: number,
   startAfterDoc?: QueryDocumentSnapshot<Donation>
