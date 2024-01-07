@@ -22,14 +22,19 @@
   }
 }
 
+body {
+  min-height: 100vh;
+}
+
 body,
 textarea,
-input {
+input, body > div {
   color: rgb(var(--foreground-rgb));
   background-color: rgb(var(--background-rgb));
 }
 
 p,
+a,
 h1,
 h2,
 h3,
@@ -40,6 +45,11 @@ small,
 label,
 span {
   color: rgb(var(--foreground-rgb));
+}
+
+a:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 section {
@@ -205,4 +215,18 @@ input[type="number"] {
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
+}
+
+.error {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(var(--primary-rgb), var(--light-opacity)),
+    rgba(var(--primary-rgb), var(--light-opacity)) 20px,
+    rgba(var(--secondary-rgb), var(--light-opacity)) 20px,
+    rgba(var(--secondary-rgb), var(--light-opacity)) 40px
+  );
+}
+
+.error > div {
+  background-color: rgb(var(--background-rgb));
 }

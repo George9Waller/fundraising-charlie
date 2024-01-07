@@ -13,6 +13,9 @@ import {
   updateDoc,
   getAggregateFromServer,
   sum,
+  startAfter,
+  getDocs,
+  Query,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { Currency } from "@/app/utils";
@@ -28,7 +31,7 @@ export interface Donation {
   payment_intent_id?: string;
 }
 
-const DONATIONS_COLLECTION = "donations";
+const DONATIONS_COLLECTION = process.env.NEXT_PUBLIC_DONATIONS_COLLECTION || "";
 
 export const getDonations = (
   maxRecords: number,
@@ -43,6 +46,28 @@ export const getDonations = (
   return onSnapshot(q, (snapshot) =>
     setRecords((snapshot as QuerySnapshot<Donation>).docs)
   );
+};
+
+export const getDonationsWithOffset = async (
+  count: number,
+  startAfterDoc?: QueryDocumentSnapshot<Donation>
+) => {
+  let q: Query;
+  if (startAfterDoc) {
+    q = query(
+      collection(db, DONATIONS_COLLECTION),
+      orderBy("timestamp", "desc"),
+      startAfter(startAfterDoc),
+      limit(count)
+    );
+  } else {
+    q = query(
+      collection(db, DONATIONS_COLLECTION),
+      orderBy("timestamp", "desc"),
+      limit(count)
+    );
+  }
+  return ((await getDocs(q)) as QuerySnapshot<Donation>).docs;
 };
 
 export const getDonationId = () => {

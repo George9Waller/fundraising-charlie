@@ -27,10 +27,10 @@ export default function DonationButtons({
       ) : (
         <>
           <p className="text-lg">You are unable to donate at this time</p>
-          <p className="text-sm">
+          <p className="text-xs">
             Donations can only be accepted from New Zealand or the UK
           </p>
-          <p className="text-sm">
+          <p className="text-xs">
             {country
               ? `Your country has been identified as ${country}`
               : "We were unable to identify which country you are in"}

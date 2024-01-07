@@ -1,10 +1,12 @@
 import { updatePaidDonation } from "@/firebase/firestore";
-import { NextRequest } from "next/server";
 import { buffer } from "stream/consumers";
 import { ReadableStream } from "stream/web";
 import Stripe from "stripe";
 
-export async function POST(request: NextRequest) {
+export default async function stripeWebhookProcessor(
+  request: Request,
+  webhookSecret: string
+) {
   const sig = request.headers.get("stripe-signature");
   let event;
 
@@ -16,7 +18,7 @@ export async function POST(request: NextRequest) {
     event = Stripe.webhooks.constructEvent(
       await buffer(request.body as ReadableStream),
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET as string
+      webhookSecret
     );
   } catch (error) {
     return new Response(`Webhook error: ${error}`);
