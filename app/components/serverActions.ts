@@ -47,8 +47,7 @@ export const getCheckoutUrl = async (
     .then((response) => {
       return response.url;
     })
-    .catch((error) => {
-      console.log(error);
+    .catch(() => {
       return undefined;
     });
   if (checkoutSessionUrl) {

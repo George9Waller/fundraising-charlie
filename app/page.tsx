@@ -7,6 +7,7 @@ import Donations from "./components/Donations";
 
 export default async function Home() {
   const getCurrency = async () => {
+    "use client"
     let country;
     let ip;
 
