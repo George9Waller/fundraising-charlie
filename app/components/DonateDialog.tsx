@@ -127,7 +127,7 @@ export default function DonateDialog({ currency, modalRef }: Props) {
           id="message"
           required={false}
           autoFocus
-          className="min-w-[400px] w-3/4"
+          className="min-w-[200px] w-3/4"
           onChange={(e) => setMessage(e.target.value)}
         />
         <div className="flex gap-2 w-1/2 justify-center">

@@ -9,58 +9,72 @@ export const getCheckoutUrl = async (
   name?: string,
   message?: string
 ) => {
-  let stripe: Stripe;
-  switch (currency) {
-    case Currency.nzd:
-      stripe = new Stripe(process.env.STRIPE_SECRET_KEY_NZ as string);
-    case Currency.gbp:
-      stripe = new Stripe(process.env.STRIPE_SECRET_KEY_UK as string);
-  }
   const donationId = getDonationId();
 
-  const checkoutSessionUrl = await stripe.checkout.sessions
-    .create({
-      line_items: [
-        {
-          price_data: {
-            currency,
-            tax_behavior: "exclusive",
-            unit_amount: amount * 100,
-            product_data: {
-              name: "Donation for Charlie Hayes",
-              description:
-                "A donation towards sports opportunities for Charlie Hayes",
-            },
+  const config: Stripe.Checkout.SessionCreateParams = {
+    line_items: [
+      {
+        price_data: {
+          currency,
+          tax_behavior: "exclusive",
+          unit_amount: amount * 100,
+          product_data: {
+            name: "Donation for Charlie Hayes",
+            description:
+              "A donation towards sports opportunities for Charlie Hayes",
           },
-          quantity: 1,
         },
-      ],
-      payment_intent_data: {
-        metadata: {
-          donationId,
-        },
+        quantity: 1,
       },
-      mode: "payment",
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/donation-succeeded/`,
-      // add an id to the payment intent metadata
-    })
-    .then((response) => {
-      return response.url;
-    })
-    .catch(() => {
-      return undefined;
-    });
-  if (checkoutSessionUrl) {
-    await createDonation(donationId, name, message);
-  }
+    ],
+    payment_intent_data: {
+      metadata: {
+        donationId,
+      },
+    },
+    mode: "payment",
+    success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/donation-succeeded/`,
+  };
 
-  return checkoutSessionUrl;
+  if (currency === Currency.nzd) {
+    const checkoutSessionUrl = await new Stripe(
+      process.env.STRIPE_SECRET_KEY_NZ as string
+    ).checkout.sessions
+      .create(config)
+      .then((response) => {
+        return response.url;
+      })
+      .catch(() => {
+        return undefined;
+      });
+    if (checkoutSessionUrl) {
+      await createDonation(donationId, name, message);
+    }
+
+    return checkoutSessionUrl;
+  } else {
+    const checkoutSessionUrl = await new Stripe(
+      process.env.STRIPE_SECRET_KEY_UK as string
+    ).checkout.sessions
+      .create(config)
+      .then((response) => {
+        return response.url;
+      })
+      .catch(() => {
+        return undefined;
+      });
+    if (checkoutSessionUrl) {
+      await createDonation(donationId, name, message);
+    }
+
+    return checkoutSessionUrl;
+  }
 };
 
 export const lookupIpCountryViaAPI = async (ip: string) => {
   "use server";
   const response = await fetch(
     `http://api.ipapi.com/api/${ip}?access_key=${process.env.IPAPI_API_KEY}&fields=country_code`
-  )
+  );
   return (await response.json())["country_code"];
 };
