@@ -4,6 +4,8 @@ import Loading from "./loading";
 import Total from "./components/Total";
 import Donations from "./components/Donations";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   return (
     <div className="min-h-screen">
