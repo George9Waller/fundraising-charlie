@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import DonateDialog from "./DonateDialog";
 import { Currency, getCurrencyFromCountry } from "../utils";
 import Loading from "../loading";
+import { lookupIpCountryViaAPI } from "./serverActions";
 
 export default function DonationButtons() {
   const [initialLoad, setInitialLoad] = useState(true);
@@ -25,13 +26,7 @@ export default function DonationButtons() {
       }
 
       if (!country && ip) {
-        country = (
-          await (
-            await fetch(
-              `http://api.ipapi.com/api/${ip}?access_key=${process.env.IPAPI_API_KEY}&fields=country_code`
-            )
-          ).json()
-        )["country_code"];
+        country = await lookupIpCountryViaAPI(ip);
       }
       return { country, currency: getCurrencyFromCountry(country) };
     };

@@ -56,3 +56,11 @@ export const getCheckoutUrl = async (
 
   return checkoutSessionUrl;
 };
+
+export const lookupIpCountryViaAPI = async (ip: string) => {
+  "use server";
+  const response = await fetch(
+    `http://api.ipapi.com/api/${ip}?access_key=${process.env.IPAPI_API_KEY}&fields=country_code`
+  )
+  return (await response.json())["country_code"];
+};
