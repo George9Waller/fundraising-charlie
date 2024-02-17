@@ -5,7 +5,7 @@ interface Props {
 export default function Loading({ fillScreen = true }: Props) {
   return (
     <div
-      className={`loading grow flex items-center justify-center w-full h-${
+      className={`gw-loading grow flex items-center justify-center w-full h-${
         fillScreen ? "screen" : "full"
       }`}
     >

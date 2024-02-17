@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex flex-row gap-2 pb-2 sticky top-0">
+        <div className="flex flex-row gap-2 pb-2 sticky top-0 z-10">
           <Link href="/">
             <button>Home</button>
           </Link>

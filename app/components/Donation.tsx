@@ -24,7 +24,7 @@ export default function Donation({
     minute: "numeric",
   });
   return (
-    <div className="card">
+    <div className="gw-card">
       <h2 className="text-lg">
         <span className="font-semibold">{getCurrencyWithSymbol(amount, currency)}</span> | {name || "Anonymous"}
       </h2>
